@@ -45,8 +45,15 @@ class Wallet(models.Model):
 
         Also creates a new transaction with the withdraw
         value.
+
+        Should the withdrawn amount is greater than the
+        balance this wallet currently has, it raises an
+        :mod:`InsufficientBalance` error. This exception
+        inherits from :mod:`django.db.IntegrityError`. So
+        that it automatically rolls-back during a
+        transaction lifecycle.
         """
-        if self.current_balance < value:
+        if value > self.current_balance:
             raise InsufficientBalance('This wallet has insufficient balance.')
 
         self.transaction_set.create(
