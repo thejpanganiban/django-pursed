@@ -3,6 +3,23 @@ django-pursed
 
 A simple wallet django app.
 
+### Running
+
+Install docker and docker-compose.
+
+```shell
+$ curl -sSL https://get.docker.com
+$ pip install docker-compose  # run it as sudo to install it globally.
+$ gpasswd -a $USER docker  # add user to docker group
+# login/logout from shell
+```
+
+Run the project!
+
+```shell
+$ docker-compose up
+```
+
 ### Creating a New Wallet
 
 ```python
