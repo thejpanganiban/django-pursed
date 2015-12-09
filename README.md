@@ -3,9 +3,6 @@ django-pursed
 
 A simple wallet django app.
 
-Usage
----
-
 ### Creating a New Wallet
 
 ```python
@@ -59,3 +56,22 @@ wallet.withdraw(100)
 This error inherits from `django.db.IntegrityError` so that
 when it is raised, the whole transaction is automatically
 rolled-back.
+
+CURRENCY_STORE_FIELD
+---
+
+The `CURRENCY_STORE_FIELD` is a django field class that
+contains how the fields should be stored. By default,
+it uses `django.models.BigIntegerField`. It was chosen that
+way for simplicity - just make cents into your smallest 
+unit (0.01 -> 1, 1.00 -> 100).
+
+You can change this to decimal by adding this to your
+settings.py:
+
+```python
+# settings.py
+CURRENCY_STORE_FIELD = models.DecimalField(max_digits=10, decimal_places=2)
+```
+
+You need to run `./manage.py makemigrations` after that.
