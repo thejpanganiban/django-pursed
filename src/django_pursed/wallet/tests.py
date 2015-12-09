@@ -54,3 +54,40 @@ class WithdrawTestCase(WalletTestCase):
         """
         with self.assertRaises(InsufficientBalance):
             self.wallet.withdraw(100)
+
+
+class TransferTestCase(WalletTestCase):
+
+    def test_transfer(self):
+        """Test the basic tranfer operation on a wallet."""
+        INITIAL_BALANCE = 100
+        TRANSFER_AMOUNT = 100
+        self._create_initial_balance(INITIAL_BALANCE)
+
+        # We create a second wallet.
+        wallet2 = self.user.wallet_set.create()
+
+        # And now, we transfer all the balance the first
+        # wallet has.
+        self.wallet.transfer(wallet2, TRANSFER_AMOUNT)
+
+        # We check that the first wallet has its balance
+        self.assertEqual(self.wallet.current_balance,
+                INITIAL_BALANCE - TRANSFER_AMOUNT)
+
+        # We also check that the second wallet has the
+        # transferred balance.
+        self.assertEqual(wallet2.current_balance, TRANSFER_AMOUNT)
+
+    def test_transfer_insufficient_balance(self):
+        """Test a scenario where a transfer is done on a
+        wallet with an insufficient balance."""
+        INITIAL_BALANCE = 100
+        TRANSFER_AMOUNT = 150
+        self._create_initial_balance(INITIAL_BALANCE)
+
+        # We create a second wallet.
+        wallet2 = self.user.wallet_set.create()
+
+        with self.assertRaises(InsufficientBalance):
+            self.wallet.transfer(wallet2, TRANSFER_AMOUNT)

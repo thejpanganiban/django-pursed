@@ -9,8 +9,6 @@ logger = logging.getLogger(__name__)
 
 class WalletTestCase(TransactionTestCase):
 
-    create_wallet = True
-
     def _create_initial_balance(self, value):
         self.wallet.transaction_set.create(
             value=value,
