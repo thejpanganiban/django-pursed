@@ -121,3 +121,46 @@ class ConcurrentDepositTestCase(WalletTestCase):
         # created only equates to the number of
         # transactions successful + the initial transaction.
         self.assertEqual(wallet.transaction_set.count(), 2)
+
+
+class ConcurrentTransferTestCase(WalletTestCase):
+
+    def test_transfer(self):
+        """We're going to simulate concurrent transfer to a
+        single wallet."""
+        INITIAL_BALANCE = 200
+        self._create_initial_balance(INITIAL_BALANCE)
+        TRANSFER = 100
+
+        _wallet2 = self.user.wallet_set.create()
+        wallet2_id = _wallet2.id
+
+        def transfer_thread():
+            with transaction.atomic():
+                wallet = Wallet.objects.select_for_update().get(
+                        pk=self.wallet.id)
+                wallet2 = Wallet.objects.select_for_update().get(pk=wallet2_id)
+                wallet.transfer(wallet2, TRANSFER)
+
+                # We simulate a long transaction so that
+                # when the other thread comes in, this
+                # thread still holds the lock.
+                time.sleep(1)
+                wallet.save()
+                wallet2.save()
+
+        t1 = threading.Thread(target=transfer_thread)
+        t2 = threading.Thread(target=transfer_thread)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+        wallet = Wallet.objects.get(pk=self.wallet.id)
+        wallet2 = Wallet.objects.get(pk=wallet2_id)
+
+        # Assert that all transfers were made and that
+        # both applies to the wallet's current_balance.
+        self.assertEqual(wallet.current_balance,
+                INITIAL_BALANCE - (TRANSFER * 2))
+        self.assertEqual(wallet2.current_balance, TRANSFER * 2)
