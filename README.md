@@ -40,7 +40,6 @@ with transaction.atomic():
     # we're modifying it.
     wallet = Wallet.select_for_update().get(pk=wallet.id)
     wallet.deposit(100)  # amount
-    wallet.save()
 ```
 
 ### Withdrawing a balance from a wallet
@@ -54,7 +53,6 @@ with transaction.atomic():
     # we're modifying it.
     wallet = Wallet.select_for_update().get(pk=wallet.id)
     wallet.withdraw(100)  # amount
-    wallet.save()
 ```
 
 ### Withdrawing with an insufficient balance

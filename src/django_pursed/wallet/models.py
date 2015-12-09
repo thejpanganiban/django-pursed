@@ -39,6 +39,7 @@ class Wallet(models.Model):
             running_balance=self.current_balance + value
         )
         self.current_balance += value
+        self.save()
 
     def withdraw(self, value):
         """Withdraw's a value from the wallet.
@@ -61,6 +62,7 @@ class Wallet(models.Model):
             running_balance=self.current_balance - value
         )
         self.current_balance -= value
+        self.save()
 
     def transfer(self, wallet, value):
         """Transfers an value to another wallet.

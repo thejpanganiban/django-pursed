@@ -21,7 +21,6 @@ class ConcurrentDepositTestCase(WalletTestCase):
                 # when the other thread comes in, this
                 # thread still holds the lock.
                 time.sleep(1)
-                wallet.save()
 
         # We run the two threads to simulate two
         # transactions running simultaneously.
@@ -61,7 +60,6 @@ class ConcurrentDepositTestCase(WalletTestCase):
                 # when the other thread comes in, this
                 # thread still holds the lock.
                 time.sleep(1)
-                wallet.save()
 
         t1 = threading.Thread(target=withdraw_thread)
         t2 = threading.Thread(target=withdraw_thread)
@@ -100,7 +98,6 @@ class ConcurrentDepositTestCase(WalletTestCase):
                 # when the other thread comes in, this
                 # thread still holds the lock.
                 time.sleep(1)
-                wallet.save()
 
         t1 = threading.Thread(target=withdraw_thread)
         t2 = threading.Thread(target=withdraw_thread)
@@ -146,8 +143,6 @@ class ConcurrentTransferTestCase(WalletTestCase):
                 # when the other thread comes in, this
                 # thread still holds the lock.
                 time.sleep(1)
-                wallet.save()
-                wallet2.save()
 
         t1 = threading.Thread(target=transfer_thread)
         t2 = threading.Thread(target=transfer_thread)
