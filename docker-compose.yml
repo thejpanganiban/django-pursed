@@ -9,7 +9,7 @@ mysql:
 app:
   build: src/
   volumes:
-    - ./src/django-pursed:/opt/app
+    - ./src:/opt/app
   working_dir: /opt/app
   links:
     - mysql:mysql
