@@ -1,0 +1,19 @@
+mysql:
+  image: mysql
+  volumes:
+    - ./db/mysql:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: pursed
+
+app:
+  build: src/
+  volumes:
+    - ./src/django-pursed:/opt/app
+  working_dir: /opt/app
+  links:
+    - mysql:mysql
+  ports:
+    - 3000:3000
+  environment:
+    DATABASE_URL: mysql://root:root@mysql/pursed
