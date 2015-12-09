@@ -22,6 +22,10 @@ $ docker-compose up
 
 ### Creating a New Wallet
 
+A wallet is owned by a user. Should you be using a custom
+user model, the wallet should still work properly as it
+the wallet points to `settings.AUTH_USER_MODEL`.
+
 ```python
 from wallet.models import Wallet
 
