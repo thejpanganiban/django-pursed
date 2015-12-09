@@ -72,6 +72,20 @@ This error inherits from `django.db.IntegrityError` so that
 when it is raised, the whole transaction is automatically
 rolled-back.
 
+### Transferring between wallets.
+
+One can transfer a values between wallets. It uses
+`withdraw` and `deposit` internally. Should the sending
+wallet have an insufficient balance,
+`wallet.errors.InsufficientBalance` is raised.
+
+```python
+with transaction.atomic():
+    wallet = Wallet.select_for_update().get(pk=wallet_id)
+    transfer_to_wallet = Wallet.select_for_update().get(pk=transfer_to_wallet_id)
+    wallet.transfer(transfer_to_wallet, 100)
+```
+
 CURRENCY_STORE_FIELD
 ---
 
