@@ -10,7 +10,7 @@ app:
   build: src/
   volumes:
     - ./src:/opt/app
-  working_dir: /opt/app
+  working_dir: /opt/app/django_pursed/
   links:
     - mysql:mysql
   ports:
