@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 import os
 
 
@@ -8,6 +8,7 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 setup(
     name="django-pursed",
     version="0.0.1",
+    packages=find_packages(),
     author="",
     author_email="",
     py_modules=['wallet', ],

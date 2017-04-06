@@ -2,3 +2,4 @@
 db/
 *.egg-info
 *~
+/dist
