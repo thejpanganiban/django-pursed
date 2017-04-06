@@ -1,7 +1,6 @@
-from test_utils import WalletTestCase
-from errors import InsufficientBalance
+from wallet.errors import InsufficientBalance
 
-# Create your tests here.
+from .test_utils import WalletTestCase
 
 
 class BalanceTestCase(WalletTestCase):

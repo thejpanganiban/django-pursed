@@ -1,8 +1,10 @@
 from django.db import transaction
-from models import Wallet
-from test_utils import WalletTestCase
 import threading
 import time
+
+from wallet.models import Wallet
+
+from .test_utils import WalletTestCase
 
 
 class ConcurrentDepositTestCase(WalletTestCase):

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import models
-from errors import InsufficientBalance
+from .errors import InsufficientBalance
 
 
 # We'll be using BigIntegerField by default instead

@@ -1,5 +1,5 @@
-from django.test import TransactionTestCase
 from django.contrib.auth import get_user_model
+from django.test import TransactionTestCase
 import logging
 
 

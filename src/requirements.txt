@@ -1,3 +1,0 @@
-django==1.9
-dj-database-url==0.3.0
-mysql-python==1.2.5
