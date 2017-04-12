@@ -1,8 +1,9 @@
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:'},
+    'default': dj_database_url.parse('mysql://root:root@mysql/pursed')
 }
+
 
 SECRET_KEY = 'fake-key'
 
