@@ -1,8 +1,11 @@
 from django.db import transaction
-from models import Wallet
-from test_utils import WalletTestCase
 import threading
 import time
+
+from wallet.models import Wallet
+from wallet.errors import InsufficientBalance
+
+from .test_utils import WalletTestCase
 
 
 class ConcurrentDepositTestCase(WalletTestCase):
@@ -11,7 +14,7 @@ class ConcurrentDepositTestCase(WalletTestCase):
         """Test two concurrent deposit transactions."""
         DEPOSIT = 100
 
-        def deposit_thread():
+        def deposit_thread(sleep=False):
             with transaction.atomic():
                 wallet = Wallet.objects.select_for_update().get(
                         pk=self.wallet.id)
@@ -20,15 +23,16 @@ class ConcurrentDepositTestCase(WalletTestCase):
                 # We simulate a long transaction so that
                 # when the other thread comes in, this
                 # thread still holds the lock.
-                time.sleep(1)
+                if sleep:
+                    time.sleep(0.1)
 
         # We run the two threads to simulate two
         # transactions running simultaneously.
-        t1 = threading.Thread(target=deposit_thread)
+        t1 = threading.Thread(target=deposit_thread, args=(True, ))
         t2 = threading.Thread(target=deposit_thread)
-        t1.start()
+        # t1.start()
         t2.start()
-        t1.join()
+        t1.run()
         t2.join()
 
         # We retrieve a new wallet object since what we
@@ -50,7 +54,7 @@ class ConcurrentDepositTestCase(WalletTestCase):
         self._create_initial_balance(INITIAL_BALANCE)
         WITHDRAW = 100
 
-        def withdraw_thread():
+        def withdraw_thread(sleep=False):
             with transaction.atomic():
                 wallet = Wallet.objects.select_for_update().get(
                         pk=self.wallet.id)
@@ -59,13 +63,14 @@ class ConcurrentDepositTestCase(WalletTestCase):
                 # We simulate a long transaction so that
                 # when the other thread comes in, this
                 # thread still holds the lock.
-                time.sleep(1)
+                if sleep:
+                    time.sleep(0.1)
 
-        t1 = threading.Thread(target=withdraw_thread)
+        t1 = threading.Thread(target=withdraw_thread, args=(True, ))
         t2 = threading.Thread(target=withdraw_thread)
-        t1.start()
+        # t1.start()
         t2.start()
-        t1.join()
+        t1.run()
         t2.join()
 
         wallet = Wallet.objects.get(pk=self.wallet.id)
@@ -88,22 +93,26 @@ class ConcurrentDepositTestCase(WalletTestCase):
         self._create_initial_balance(INITIAL_BALANCE)
         WITHDRAW = 100
 
-        def withdraw_thread():
+        def withdraw_thread(sleep=False):
             with transaction.atomic():
                 wallet = Wallet.objects.select_for_update().get(
                         pk=self.wallet.id)
-                wallet.withdraw(WITHDRAW)
+                try:
+                    wallet.withdraw(WITHDRAW)
+                except InsufficientBalance:
+                    pass
 
                 # We simulate a long transaction so that
                 # when the other thread comes in, this
                 # thread still holds the lock.
-                time.sleep(1)
+                if sleep:
+                    time.sleep(0.1)
 
-        t1 = threading.Thread(target=withdraw_thread)
+        t1 = threading.Thread(target=withdraw_thread, args=(True, ))
         t2 = threading.Thread(target=withdraw_thread)
-        t1.start()
+        # t1.start()
         t2.start()
-        t1.join()
+        t1.run()
         t2.join()
 
         wallet = Wallet.objects.get(pk=self.wallet.id)
@@ -132,7 +141,7 @@ class ConcurrentTransferTestCase(WalletTestCase):
         _wallet2 = self.user.wallet_set.create()
         wallet2_id = _wallet2.id
 
-        def transfer_thread():
+        def transfer_thread(sleep=False):
             with transaction.atomic():
                 wallet = Wallet.objects.select_for_update().get(
                         pk=self.wallet.id)
@@ -142,13 +151,14 @@ class ConcurrentTransferTestCase(WalletTestCase):
                 # We simulate a long transaction so that
                 # when the other thread comes in, this
                 # thread still holds the lock.
-                time.sleep(1)
+                if sleep:
+                    time.sleep(0.1)
 
-        t1 = threading.Thread(target=transfer_thread)
+        t1 = threading.Thread(target=transfer_thread, args=(True, ))
         t2 = threading.Thread(target=transfer_thread)
-        t1.start()
+        # t1.start()
         t2.start()
-        t1.join()
+        t1.run()
         t2.join()
 
         wallet = Wallet.objects.get(pk=self.wallet.id)
